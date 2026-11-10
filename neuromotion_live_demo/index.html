@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>NeuroMotion</title>
+
+<link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<main class="shell">
+
+<header class="topbar">
+
+    <div class="brand">
+
+        <div class="logo">
+            N
+        </div>
+
+        <div>
+            <h1>
+                NeuroMotion
+            </h1>
+
+            <p>
+                Epicondylitis Rehabilitation Monitoring System
+            </p>
+        </div>
+
+    </div>
+
+    <div class="topActions">
+
+        <div class="liveBadge">
+            ● LIVE MONITORING
+        </div>
+
+        <a
+            class="downloadButton"
+            href="/download-csv">
+            DOWNLOAD CSV
+        </a>
+
+    </div>
+
+</header>
+
+
+<section class="deviceGrid">
+
+    <article class="deviceCard">
+
+        <div>
+            <strong>
+                EMG Acquisition
+            </strong>
+
+            <small>
+                Arduino Uno · ECR Muscle Sensor v3.0
+            </small>
+        </div>
+
+        <span
+            id="arduinoDot"
+            class="dot disconnected">
+        </span>
+
+    </article>
+
+
+    <article class="deviceCard">
+
+        <div>
+            <strong>
+                Motion Acquisition
+            </strong>
+
+            <small>
+                ESP32 · MPU6050 wrist IMU
+            </small>
+        </div>
+
+        <span
+            id="espDot"
+            class="dot disconnected">
+        </span>
+
+    </article>
+
+</section>
+
+
+<section class="loadPanel">
+
+    <div>
+        <span class="eyebrow">
+            CURRENT EXERCISE LOAD
+        </span>
+
+        <p>
+            Enter the actual resistance/load used for this session.
+        </p>
+    </div>
+
+    <div class="loadControls">
+
+        <input
+            id="loadInput"
+            type="number"
+            min="0"
+            step="0.1"
+            placeholder="0.5">
+
+        <span>kg</span>
+
+        <button onclick="setLoad()">
+            SET LOAD
+        </button>
+
+        <span class="baselineDivider">|</span>
+
+        <span class="baselineLabel">Demo baseline</span>
+
+        <input
+            id="baselineEmgInput"
+            type="number"
+            min="1"
+            step="1"
+            value="300"
+            title="Baseline mean EMG">
+
+        <span>ADC</span>
+
+        <input
+            id="baselineTimeInput"
+            type="number"
+            min="0.1"
+            step="0.1"
+            value="4.0"
+            title="Baseline rep time">
+
+        <span>s</span>
+
+        <button onclick="setBaseline()">
+            APPLY
+        </button>
+
+    </div>
+
+</section>
+
+
+<section class="heroGrid">
+
+    <article class="panel">
+
+        <span class="eyebrow">
+            CURRENT REP
+        </span>
+
+        <div
+            id="rep"
+            class="heroValue">
+            0
+        </div>
+
+        <div
+            id="phase"
+            class="cyanText">
+            WAITING
+        </div>
+
+        <div class="subMetric">
+            Last rep:
+            <strong id="repTime">
+                0.00 s
+            </strong>
+        </div>
+
+    </article>
+
+
+    <article class="panel">
+
+        <span class="eyebrow">
+            ECR ACTIVITY
+        </span>
+
+        <div class="heroLine">
+
+            <div
+                id="emg"
+                class="heroValue">
+                0
+            </div>
+
+            <span>
+                ADC
+            </span>
+
+        </div>
+
+        <div class="emgTrack">
+            <span id="emgFill"></span>
+        </div>
+
+        <div class="metricFooter">
+
+            <span id="muscle">
+                WAITING
+            </span>
+
+            <span>
+                Fatigue:
+                <strong id="fatigue">
+                    CALIBRATING
+                </strong>
+            </span>
+
+        </div>
+
+    </article>
+
+
+    <article class="panel">
+
+        <span class="eyebrow">
+            WRIST CONTROL
+        </span>
+
+        <div
+            id="control"
+            class="controlValue">
+            CALIBRATING
+        </div>
+
+        <div class="terminal">
+
+            <span>
+                Rep time
+            </span>
+
+            <strong id="controlRepTime">
+                0.00 s
+            </strong>
+
+        </div>
+
+        <div class="terminal">
+
+            <span>
+                Terminal decel. proxy
+            </span>
+
+            <strong id="terminalDecel">
+                0 °/s²
+            </strong>
+
+        </div>
+
+        <div class="gyroGrid">
+
+            <div>
+                GX
+                <strong id="gx">0.0</strong>
+            </div>
+
+            <div>
+                GY
+                <strong id="gy">0.0</strong>
+            </div>
+
+            <div>
+                GZ
+                <strong id="gz">0.0</strong>
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <article class="panel">
+
+        <span class="eyebrow">
+            BASELINE DECISION
+        </span>
+
+        <div
+            id="decision"
+            class="decisionValue">
+            CALIBRATING
+        </div>
+
+        <p
+            id="decisionText"
+            class="muted">
+            Complete the first five controlled repetitions.
+        </p>
+
+    </article>
+
+</section>
+
+
+<section class="middleGrid">
+
+    <article class="panel graphPanel">
+
+        <div class="panelHeader">
+
+            <div>
+
+                <h2>
+                    Live Sensor Fusion
+                </h2>
+
+                <p>
+                    ECR envelope + wrist angular velocity
+                </p>
+
+            </div>
+
+            <span class="streamBadge">
+                LIVE STREAM
+            </span>
+
+        </div>
+
+        <canvas
+            id="fusionChart"
+            width="1100"
+            height="330">
+        </canvas>
+
+        <div class="legend">
+
+            <span class="cyanLine"></span>
+            EMG envelope
+
+            <span class="purpleLine"></span>
+            GY angular velocity
+
+        </div>
+
+    </article>
+
+
+    <article class="panel rulePanel">
+
+        <span class="eyebrow">
+            CORE PROJECT RULE
+        </span>
+
+        <h2 id="ruleTitle">
+            Calibration in progress
+        </h2>
+
+        <div class="ruleRows">
+
+            <div>
+                <span>
+                    Baseline source
+                </span>
+
+                <strong id="baselineSource">
+                    DEMO
+                </strong>
+            </div>
+
+            <div>
+                <span>
+                    Fatigue evidence
+                </span>
+
+                <strong id="ruleFatigue">
+                    NO
+                </strong>
+            </div>
+
+
+            <div>
+                <span>
+                    Wrist control preserved
+                </span>
+
+                <strong id="ruleControl">
+                    --
+                </strong>
+            </div>
+
+
+            <div>
+                <span>
+                    Current load
+                </span>
+
+                <strong id="ruleLoad">
+                    0 kg
+                </strong>
+            </div>
+
+        </div>
+
+        <div
+            id="ruleCallout"
+            class="ruleCallout">
+            Collecting the first five repetitions to establish a session baseline.
+        </div>
+
+    </article>
+
+</section>
+
+
+<section class="panel">
+
+    <div class="panelHeader">
+
+        <div>
+
+            <h2>
+                Rep-by-Rep Analysis
+            </h2>
+
+            <p>
+                Every completed repetition is logged automatically to CSV.
+            </p>
+
+        </div>
+
+        <span
+            id="csvName"
+            class="csvName">
+        </span>
+
+    </div>
+
+    <div class="tableWrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Rep</th>
+                    <th>Rep time</th>
+                    <th>Mean EMG</th>
+                    <th>Peak EMG</th>
+                    <th>Normalized</th>
+                    <th>Terminal decel.</th>
+                    <th>Load</th>
+                    <th>Fatigue</th>
+                    <th>Control</th>
+                    <th>Decision</th>
+                </tr>
+
+            </thead>
+
+            <tbody id="repRows"></tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<section class="bottomGrid">
+
+    <article class="panel">
+
+        <span class="eyebrow">
+            SESSION SUMMARY
+        </span>
+
+        <div class="summaryGrid">
+
+            <div>
+                <strong id="summaryReps">0</strong>
+                <span>Total reps</span>
+            </div>
+
+            <div>
+                <strong id="summaryAvgTime">--</strong>
+                <span>Avg rep time</span>
+            </div>
+
+            <div>
+                <strong id="summaryMeanEmg">--</strong>
+                <span>Latest mean EMG</span>
+            </div>
+
+            <div>
+                <strong id="summaryNormalized">--</strong>
+                <span>Normalized EMG</span>
+            </div>
+
+            <div>
+                <strong id="summaryAdmitted">0</strong>
+                <span>Admitted</span>
+            </div>
+
+            <div>
+                <strong id="summaryWithheld">0</strong>
+                <span>Withheld</span>
+            </div>
+
+        </div>
+
+    </article>
+
+
+    <article class="panel">
+
+        <span class="eyebrow">
+            LOAD / THERAPY GUIDANCE
+        </span>
+
+        <div
+            id="progression"
+            class="readinessValue">
+            CALIBRATING
+        </div>
+
+        <p
+            id="guidance"
+            class="muted">
+            Complete controlled repetitions first.
+        </p>
+
+    </article>
+
+</section>
+
+
+<footer class="panel footerPanel">
+
+    <div>
+        <strong>
+            Pipeline
+        </strong>
+
+        <span>
+            ECR EMG → envelope trend + MPU → rep segmentation → rep timing → control assessment → load guidance → CSV session log
+        </span>
+    </div>
+
+    <div class="footerWarning">
+        Prototype guidance supports assessment and does not replace clinical judgement.
+    </div>
+
+</footer>
+
+
+</main>
+
+<script src="/static/app.js"></script>
+
+</body>
+</html>
