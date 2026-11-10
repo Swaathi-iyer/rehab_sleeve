@@ -1,0 +1,658 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    font-family: Inter, Segoe UI, Arial, sans-serif;
+    background: #050914;
+    color: #eef8ff;
+}
+
+body {
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(34, 211, 238, 0.10),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 100% 15%,
+            rgba(139, 92, 246, 0.10),
+            transparent 30%
+        ),
+        #050914;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(
+            rgba(255, 255, 255, 0.018) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.018) 1px,
+            transparent 1px
+        );
+    background-size: 42px 42px;
+    pointer-events: none;
+}
+
+.shell {
+    max-width: 1550px;
+    margin: auto;
+    padding: 28px;
+    position: relative;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 15px;
+    display: grid;
+    place-items: center;
+    background:
+        linear-gradient(
+            135deg,
+            #2ad5ff,
+            #815dff
+        );
+    font-size: 23px;
+    font-weight: 800;
+    box-shadow:
+        0 0 30px
+        rgba(34, 211, 238, 0.20);
+}
+
+.brand h1 {
+    margin: 0;
+    font-size: 25px;
+}
+
+.brand p {
+    margin: 4px 0 0;
+    color: #7890ad;
+    font-size: 11px;
+}
+
+.topActions {
+    display: flex;
+    gap: 10px;
+}
+
+.liveBadge,
+.downloadButton {
+    border-radius: 999px;
+    padding: 9px 13px;
+    font-size: 10px;
+    letter-spacing: 0.8px;
+}
+
+.liveBadge {
+    color: #78efaa;
+    border:
+        1px solid
+        rgba(39, 220, 125, 0.28);
+    background:
+        rgba(39, 220, 125, 0.06);
+}
+
+.downloadButton {
+    text-decoration: none;
+    color: #76e9ff;
+    border:
+        1px solid
+        rgba(34, 211, 238, 0.24);
+    background:
+        rgba(34, 211, 238, 0.06);
+}
+
+.deviceGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 13px;
+    margin-bottom: 13px;
+}
+
+.deviceCard,
+.panel,
+.loadPanel {
+    background:
+        rgba(10, 20, 37, 0.82);
+    border:
+        1px solid
+        rgba(67, 202, 255, 0.15);
+    border-radius: 17px;
+    backdrop-filter: blur(15px);
+    box-shadow:
+        0 15px 45px
+        rgba(0, 0, 0, 0.18);
+}
+
+.deviceCard {
+    padding: 14px 17px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.deviceCard strong {
+    display: block;
+    font-size: 12px;
+}
+
+.deviceCard small {
+    display: block;
+    color: #7588a5;
+    margin-top: 4px;
+    font-size: 9px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.connected {
+    background: #26df7c;
+    box-shadow:
+        0 0 14px
+        #26df7c;
+}
+
+.disconnected {
+    background: #ff5261;
+    box-shadow:
+        0 0 14px
+        rgba(255, 82, 97, 0.80);
+}
+
+.loadPanel {
+    padding: 13px 17px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 13px;
+}
+
+.loadPanel p {
+    margin: 4px 0 0;
+    color: #7588a5;
+    font-size: 10px;
+}
+
+.loadControls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.loadControls input {
+    width: 95px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.08);
+    background: #091525;
+    color: white;
+}
+
+.loadControls button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #73eaff;
+    border:
+        1px solid
+        rgba(34, 211, 238, 0.22);
+    background:
+        rgba(34, 211, 238, 0.08);
+}
+
+.heroGrid {
+    display: grid;
+    grid-template-columns:
+        0.75fr
+        1.25fr
+        1.2fr
+        1fr;
+    gap: 13px;
+    margin-bottom: 13px;
+}
+
+.panel {
+    padding: 18px;
+}
+
+.eyebrow {
+    display: block;
+    color: #7184a2;
+    font-size: 9px;
+    letter-spacing: 1.6px;
+    margin-bottom: 13px;
+}
+
+.heroValue {
+    font-size: 51px;
+    line-height: 1;
+    font-weight: 780;
+}
+
+.heroLine {
+    display: flex;
+    align-items: flex-end;
+    gap: 7px;
+}
+
+.heroLine > span {
+    color: #7387a4;
+    font-size: 11px;
+    padding-bottom: 5px;
+}
+
+.cyanText {
+    color: #6de9ff;
+    margin-top: 13px;
+    font-size: 10px;
+}
+
+.subMetric {
+    margin-top: 17px;
+    color: #7486a1;
+    font-size: 10px;
+}
+
+.subMetric strong {
+    color: white;
+}
+
+.emgTrack {
+    height: 7px;
+    margin-top: 14px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #172239;
+}
+
+.emgTrack span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background:
+        linear-gradient(
+            90deg,
+            #22d3ee,
+            #4fa3ff,
+            #8b5cf6
+        );
+    transition: 0.12s;
+    box-shadow:
+        0 0 13px
+        rgba(34, 211, 238, 0.35);
+}
+
+.metricFooter {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    color: #7486a2;
+    font-size: 9px;
+}
+
+.metricFooter strong {
+    color: #dcedff;
+}
+
+.controlValue {
+    font-size: 29px;
+    color: #76efad;
+    font-weight: 800;
+}
+
+.terminal {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-size: 9px;
+    color: #7a8ba4;
+}
+
+.terminal strong {
+    color: #edf8ff;
+}
+
+.gyroGrid {
+    display: grid;
+    grid-template-columns:
+        repeat(3, 1fr);
+    gap: 7px;
+    margin-top: 13px;
+}
+
+.gyroGrid div {
+    padding: 8px;
+    border-radius: 9px;
+    text-align: center;
+    color: #6f829f;
+    font-size: 8px;
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.06);
+    background:
+        rgba(255, 255, 255, 0.025);
+}
+
+.gyroGrid strong {
+    display: block;
+    color: white;
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+.decisionValue {
+    color: #71ebff;
+    font-size: 30px;
+    font-weight: 800;
+}
+
+.muted {
+    color: #7c8fa9;
+    font-size: 10px;
+    line-height: 1.55;
+}
+
+.middleGrid {
+    display: grid;
+    grid-template-columns:
+        1.9fr 0.9fr;
+    gap: 13px;
+    margin-bottom: 13px;
+}
+
+.panelHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.panelHeader h2,
+.rulePanel h2 {
+    margin: 0;
+    font-size: 15px;
+}
+
+.panelHeader p {
+    margin: 4px 0 0;
+    color: #7890ab;
+    font-size: 9px;
+}
+
+.streamBadge {
+    padding: 7px 10px;
+    border-radius: 999px;
+    color: #6de9ff;
+    font-size: 8px;
+    border:
+        1px solid
+        rgba(34, 211, 238, 0.22);
+}
+
+.graphPanel canvas {
+    width: 100%;
+    height: 245px;
+    margin-top: 7px;
+}
+
+.legend {
+    color: #7587a3;
+    font-size: 8px;
+}
+
+.legend span {
+    display: inline-block;
+    width: 14px;
+    height: 2px;
+    margin:
+        0 5px 2px 13px;
+}
+
+.cyanLine {
+    background: #22d3ee;
+}
+
+.purpleLine {
+    background: #8b5cf6;
+}
+
+.ruleRows {
+    display: grid;
+    gap: 8px;
+    margin-top: 17px;
+}
+
+.ruleRows div {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-radius: 9px;
+    color: #7588a3;
+    font-size: 9px;
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.06);
+    background:
+        rgba(255, 255, 255, 0.022);
+}
+
+.ruleRows strong {
+    color: #e9f5ff;
+}
+
+.ruleCallout {
+    margin-top: 11px;
+    padding: 11px;
+    border-left:
+        2px solid #22d3ee;
+    background:
+        rgba(34, 211, 238, 0.055);
+    color: #a0b3ca;
+    font-size: 9px;
+    line-height: 1.5;
+}
+
+.csvName {
+    color: #69e6ff;
+    font-size: 8px;
+}
+
+.tableWrap {
+    overflow: auto;
+    margin-top: 13px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 9px;
+}
+
+th {
+    padding: 9px;
+    text-align: left;
+    color: #6f829f;
+    font-weight: 500;
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.07);
+}
+
+td {
+    padding: 9px;
+    color: #d5e3ef;
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.04);
+}
+
+.bottomGrid {
+    display: grid;
+    grid-template-columns:
+        1.6fr 0.8fr;
+    gap: 13px;
+    margin-top: 13px;
+}
+
+.summaryGrid {
+    display: grid;
+    grid-template-columns:
+        repeat(6, 1fr);
+    gap: 8px;
+}
+
+.summaryGrid div {
+    padding: 11px;
+    border-radius: 10px;
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.05);
+    background:
+        rgba(255, 255, 255, 0.024);
+}
+
+.summaryGrid strong {
+    display: block;
+    font-size: 21px;
+}
+
+.summaryGrid span {
+    display: block;
+    color: #71839e;
+    margin-top: 5px;
+    font-size: 8px;
+}
+
+.readinessValue {
+    display: inline-block;
+    padding: 13px 15px;
+    border-radius: 11px;
+    color: #8bf2ff;
+    font-weight: 800;
+    letter-spacing: 0.6px;
+    border:
+        1px solid
+        rgba(34, 211, 238, 0.25);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(34, 211, 238, 0.07),
+            rgba(139, 92, 246, 0.07)
+        );
+}
+
+.footerPanel {
+    margin-top: 13px;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    align-items: center;
+}
+
+.footerPanel strong {
+    margin-right: 12px;
+    font-size: 9px;
+}
+
+.footerPanel span {
+    color: #71839e;
+    font-size: 8px;
+}
+
+.footerWarning {
+    color: #ffd267;
+    font-size: 8px;
+}
+
+@media(max-width: 1100px) {
+
+    .heroGrid {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .middleGrid,
+    .bottomGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .summaryGrid {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+}
+
+@media(max-width: 700px) {
+
+    .shell {
+        padding: 15px;
+    }
+
+    .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 11px;
+    }
+
+    .deviceGrid,
+    .heroGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .loadPanel {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .summaryGrid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+}
+
+.baselineDivider {
+    color: #30425d;
+    margin: 0 2px;
+}
+
+.baselineLabel {
+    color: #7184a2;
+    font-size: 9px;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+@media(max-width: 900px) {
+    .loadControls {
+        flex-wrap: wrap;
+    }
+}
