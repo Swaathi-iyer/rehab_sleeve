@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeuroMotion | Epicondylitis Monitor</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#050810;--panel:rgba(12,20,35,.72);--border:rgba(103,232,249,.15);
+--cyan:#22d3ee;--purple:#8b5cf6;--green:#22c55e;--red:#ef4444;
+--text:#f8fafc;--muted:#7f8da5
+}
+body{
+min-height:100vh;
+background:
+radial-gradient(circle at 10% 10%,rgba(34,211,238,.10),transparent 28%),
+radial-gradient(circle at 90% 15%,rgba(139,92,246,.12),transparent 30%),
+#050810;
+color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif
+}
+body:before{
+content:"";position:fixed;inset:0;
+background-image:
+linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),
+linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);
+background-size:42px 42px;pointer-events:none
+}
+.app{max-width:1500px;margin:auto;padding:30px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.brand{display:flex;align-items:center;gap:16px}
+.logo{
+width:52px;height:52px;border-radius:16px;
+background:linear-gradient(135deg,var(--cyan),var(--purple));
+display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:800;
+box-shadow:0 0 35px rgba(34,211,238,.25)
+}
+.brand h1{font-size:25px}.brand p{color:var(--muted);font-size:13px;margin-top:5px}
+.liveBadge{
+padding:9px 14px;border:1px solid rgba(34,197,94,.35);border-radius:999px;
+background:rgba(34,197,94,.08);font-size:12px;letter-spacing:1px;color:#86efac
+}
+.deviceRow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.device,.card,.infoPanel{
+background:var(--panel);backdrop-filter:blur(18px);
+border:1px solid var(--border);border-radius:18px
+}
+.device{padding:15px 18px;display:flex;justify-content:space-between;align-items:center}
+.deviceName{font-size:13px;font-weight:600}.deviceSub{font-size:11px;color:var(--muted);margin-top:3px}
+.statusDot{width:10px;height:10px;border-radius:50%}
+.connected{background:var(--green);box-shadow:0 0 14px rgba(34,197,94,.8)}
+.disconnected{background:var(--red);box-shadow:0 0 12px rgba(239,68,68,.6)}
+.topGrid{display:grid;grid-template-columns:1.25fr 1fr .8fr;gap:18px;margin-bottom:18px}
+.card{padding:22px}
+.cardTitle{font-size:11px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase;margin-bottom:14px}
+.metric{font-size:54px;font-weight:700;line-height:1}
+.metricUnit{color:var(--muted);font-size:13px;margin-left:8px}
+.metricRow{display:flex;align-items:end}
+.statusPill{
+margin-top:16px;display:inline-flex;padding:8px 13px;border-radius:999px;
+font-size:11px;font-weight:600;letter-spacing:.7px
+}
+.statusActive{background:rgba(34,197,94,.12);color:#86efac;border:1px solid rgba(34,197,94,.25)}
+.statusRest{background:rgba(148,163,184,.09);color:#cbd5e1;border:1px solid rgba(148,163,184,.18)}
+.statusMotion{background:rgba(34,211,238,.11);color:#67e8f9;border:1px solid rgba(34,211,238,.25)}
+.emgTrack{margin-top:18px;height:9px;border-radius:10px;background:rgba(255,255,255,.06);overflow:hidden}
+.emgFill{
+height:100%;width:0;background:linear-gradient(90deg,#22d3ee,#3b82f6,#8b5cf6);
+transition:width .18s ease
+}
+.wristVisual{height:116px;display:flex;justify-content:center;align-items:center}
+.wristRing{
+width:110px;height:110px;border-radius:50%;border:1px solid rgba(34,211,238,.25);
+display:flex;align-items:center;justify-content:center;
+box-shadow:inset 0 0 25px rgba(34,211,238,.08),0 0 25px rgba(34,211,238,.05)
+}
+.arrow{font-size:36px;color:var(--cyan)}
+.repNumber{
+font-size:76px;font-weight:700;line-height:.95;
+background:linear-gradient(135deg,white,var(--cyan));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent
+}
+.repText{color:var(--muted);font-size:12px;margin-top:9px}
+.signalGrid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.graphCard{min-height:330px}
+.graphTitle{font-size:15px;font-weight:600}
+.graphSub{font-size:11px;color:var(--muted);margin-top:4px}
+.gyroRow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:18px}
+.gyroBox{
+padding:11px;border-radius:11px;background:rgba(255,255,255,.025);
+border:1px solid rgba(255,255,255,.05);text-align:center
+}
+.gyroLabel{font-size:9px;color:var(--muted);letter-spacing:1px}
+.gyroValue{margin-top:5px;font-size:18px;font-weight:600}
+canvas{width:100%;height:210px;margin-top:18px}
+.bottomPanel{margin-top:18px;display:grid;grid-template-columns:1.5fr 1fr;gap:18px}
+.infoPanel{padding:20px}
+.infoTitle{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px}
+.pipeline{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap;align-items:center}
+.pipe{
+font-size:11px;padding:8px 12px;border-radius:8px;
+background:rgba(34,211,238,.06);border:1px solid rgba(34,211,238,.12)
+}
+.pipeArrow{color:var(--cyan)}
+.disclaimer{color:var(--muted);font-size:11px;line-height:1.7;margin-top:13px}
+@media(max-width:900px){
+.topGrid,.signalGrid,.bottomPanel,.deviceRow{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<header class="header">
+<div class="brand">
+<div class="logo">N</div>
+<div>
+<h1>NeuroMotion</h1>
+<p>Epicondylitis Rehabilitation Monitoring System</p>
+</div>
+</div>
+<div class="liveBadge">● LIVE MONITORING</div>
+</header>
+
+<section class="deviceRow">
+<div class="device">
+<div>
+<div class="deviceName">EMG Acquisition</div>
+<div class="deviceSub">Arduino Uno · ECR Muscle Sensor</div>
+</div>
+<div id="arduinoDot" class="statusDot disconnected"></div>
+</div>
+
+<div class="device">
+<div>
+<div class="deviceName">Motion Acquisition</div>
+<div class="deviceSub">ESP32 · MPU6050</div>
+</div>
+<div id="espDot" class="statusDot disconnected"></div>
+</div>
+</section>
+
+<section class="topGrid">
+
+<div class="card">
+<div class="cardTitle">ECR Muscle Activity</div>
+<div class="metricRow">
+<div id="emgValue" class="metric">0</div>
+<div class="metricUnit">ADC</div>
+</div>
+<div class="emgTrack"><div id="emgFill" class="emgFill"></div></div>
+<div id="muscleState" class="statusPill statusRest">● WAITING</div>
+</div>
+
+<div class="card">
+<div class="cardTitle">Wrist Motion</div>
+<div class="wristVisual">
+<div class="wristRing">
+<div id="motionArrow" class="arrow">—</div>
+</div>
+</div>
+<div id="wristState" class="statusPill statusRest">WAITING</div>
+</div>
+
+<div class="card">
+<div class="cardTitle">Repetition Counter</div>
+<div id="repCount" class="repNumber">0</div>
+<div class="repText">COMPLETED REPS</div>
+</div>
+
+</section>
+
+<section class="signalGrid">
+
+<div class="card graphCard">
+<div class="graphTitle">EMG Signal</div>
+<div class="graphSub">Real-time filtered ECR envelope</div>
+<canvas id="emgCanvas" width="900" height="250"></canvas>
+</div>
+
+<div class="card graphCard">
+<div class="graphTitle">Wrist Angular Velocity</div>
+<div class="graphSub">MPU6050 gyroscope stream · GY axis</div>
+
+<div class="gyroRow">
+<div class="gyroBox"><div class="gyroLabel">GX</div><div id="gx" class="gyroValue">0.0</div></div>
+<div class="gyroBox"><div class="gyroLabel">GY</div><div id="gy" class="gyroValue">0.0</div></div>
+<div class="gyroBox"><div class="gyroLabel">GZ</div><div id="gz" class="gyroValue">0.0</div></div>
+</div>
+
+<canvas id="gyroCanvas" width="900" height="200"></canvas>
+</div>
+
+</section>
+
+<section class="bottomPanel">
+<div class="infoPanel">
+<div class="infoTitle">Sensor Fusion Pipeline</div>
+<div class="pipeline">
+<div class="pipe">ECR EMG</div><div class="pipeArrow">→</div>
+<div class="pipe">Muscle Envelope</div><div class="pipeArrow">+</div>
+<div class="pipe">Wrist IMU</div><div class="pipeArrow">→</div>
+<div class="pipe">Rep Segmentation</div><div class="pipeArrow">→</div>
+<div class="pipe">Rehabilitation Metrics</div>
+</div>
+</div>
+
+<div class="infoPanel">
+<div class="infoTitle">Session Status</div>
+<div id="sessionText" style="margin-top:16px;font-size:18px;font-weight:600">
+Waiting for sensors
+</div>
+<div class="disclaimer">
+Experimental rehabilitation monitoring prototype. Measurements support assessment and do not constitute clinical diagnosis.
+</div>
+</div>
+</section>
+
+</div>
+
+<script>
+const MAX_POINTS=120;
+let emgHistory=[];
+let gyroHistory=[];
+
+function drawGraph(canvas,values,color){
+const ctx=canvas.getContext("2d");
+const w=canvas.width;
+const h=canvas.height;
+
+ctx.clearRect(0,0,w,h);
+ctx.strokeStyle="rgba(255,255,255,.045)";
+ctx.lineWidth=1;
+
+for(let i=1;i<5;i++){
+let y=(h/5)*i;
+ctx.beginPath();
+ctx.moveTo(0,y);
+ctx.lineTo(w,y);
+ctx.stroke();
+}
+
+if(values.length<2)return;
+
+let min=Math.min(...values);
+let max=Math.max(...values);
+
+if(max===min)max=min+1;
+
+ctx.beginPath();
+
+values.forEach((v,i)=>{
+const x=i/(MAX_POINTS-1)*w;
+const y=h-((v-min)/(max-min))*(h-30)-15;
+if(i===0)ctx.moveTo(x,y);
+else ctx.lineTo(x,y);
+});
+
+ctx.strokeStyle=color;
+ctx.lineWidth=2.5;
+ctx.shadowColor=color;
+ctx.shadowBlur=10;
+ctx.stroke();
+ctx.shadowBlur=0;
+}
+
+async function updateData(){
+try{
+const r=await fetch("/data");
+const d=await r.json();
+
+document.getElementById("emgValue").innerText=d.emg_filtered;
+
+document.getElementById("emgFill").style.width=
+Math.min(d.emg_filtered/4,100)+"%";
+
+const ms=document.getElementById("muscleState");
+
+if(d.muscle_state==="ACTIVE"){
+ms.innerText="● MUSCLE ACTIVE";
+ms.className="statusPill statusActive";
+}else{
+ms.innerText="● RELAXED";
+ms.className="statusPill statusRest";
+}
+
+document.getElementById("gx").innerText=d.gx.toFixed(1);
+document.getElementById("gy").innerText=d.gy.toFixed(1);
+document.getElementById("gz").innerText=d.gz.toFixed(1);
+document.getElementById("repCount").innerText=d.reps;
+
+const wrist=document.getElementById("wristState");
+const arrow=document.getElementById("motionArrow");
+
+if(d.wrist_state==="WRIST UP"){
+wrist.innerText="WRIST EXTENSION";
+wrist.className="statusPill statusMotion";
+arrow.innerText="↑";
+}else if(d.wrist_state==="WRIST DOWN"){
+wrist.innerText="RETURN PHASE";
+wrist.className="statusPill statusMotion";
+arrow.innerText="↓";
+}else{
+wrist.innerText="REST";
+wrist.className="statusPill statusRest";
+arrow.innerText="—";
+}
+
+document.getElementById("arduinoDot").className=
+"statusDot "+(d.arduino_connected?"connected":"disconnected");
+
+document.getElementById("espDot").className=
+"statusDot "+(d.esp32_connected?"connected":"disconnected");
+
+const session=document.getElementById("sessionText");
+
+if(d.arduino_connected&&d.esp32_connected){
+session.innerText="Sensors synchronized · Session active";
+session.style.color="#67e8f9";
+}else if(d.arduino_connected||d.esp32_connected){
+session.innerText="Waiting for second sensor";
+session.style.color="#facc15";
+}else{
+session.innerText="Waiting for sensors";
+session.style.color="#94a3b8";
+}
+
+emgHistory.push(d.emg_filtered);
+gyroHistory.push(d.gy);
+
+if(emgHistory.length>MAX_POINTS)emgHistory.shift();
+if(gyroHistory.length>MAX_POINTS)gyroHistory.shift();
+
+drawGraph(document.getElementById("emgCanvas"),emgHistory,"#22d3ee");
+drawGraph(document.getElementById("gyroCanvas"),gyroHistory,"#8b5cf6");
+
+}catch(e){
+console.log(e);
+}
+}
+
+setInterval(updateData,80);
+</script>
+
+</body>
+</html>
