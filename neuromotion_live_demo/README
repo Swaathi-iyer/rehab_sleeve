@@ -1,0 +1,73 @@
+
+NEUROMOTION — LIVE FACULTY DEMO BUILD
+
+THIS VERSION IS MADE FOR A LIVE DEMONSTRATION.
+
+IMPORTANT DEMO BEHAVIOUR
+- There is NO 5-rep waiting period.
+- A startup demo baseline is available immediately:
+    mean EMG = 300 ADC
+    rep time = 4.0 s
+- By default, REP 1 automatically replaces those startup values with
+  the actual live mean EMG, actual rep time and terminal-deceleration proxy.
+- Therefore REP 1 becomes the reference rep and later reps are compared
+  with the same session / electrode placement.
+- If you do not want rep-1 anchoring, type a baseline EMG and baseline
+  rep time in the dashboard and click APPLY before the first rep.
+
+PER-REP VALUES CALCULATED
+- rep number
+- rep movement time
+- mean EMG during that rep
+- peak EMG during that rep
+- normalized EMG percentage:
+      mean EMG / baseline mean EMG × 100
+- terminal angular-deceleration proxy from the final GY samples
+- tempo deviation percentage from baseline
+- fatigue trend
+- movement-control status
+- ADMIT / WITHHOLD decision
+- load-progression suggestion
+
+DEMO HEURISTICS
+Fatigue trend:
+    mean EMG >= 120% of baseline
+
+Control:
+    rep time within ±35% of baseline
+    AND terminal-deceleration proxy at least 60% of baseline
+
+Decision:
+    fatigue trend + GOOD control -> WITHHOLD
+    otherwise -> ADMIT
+
+These are DEMO HEURISTICS, not clinically validated thresholds.
+
+CSV
+Every completed rep is automatically appended to:
+    session_logs/session_YYYYMMDD_HHMMSS.csv
+
+The dashboard also has a DOWNLOAD CSV button.
+
+RUN
+1. Upload firmware/arduino_emg/arduino_emg.ino to the Arduino Uno.
+2. Upload firmware/esp32_mpu/esp32_mpu.ino to the ESP32.
+3. Close Arduino Serial Monitor / Serial Plotter.
+4. Keep both boards connected by USB.
+5. Open this folder in PyCharm.
+6. Terminal:
+       pip install -r requirements.txt
+7. Run:
+       python app.py
+8. Select the Arduino COM port and ESP32 COM port.
+9. Open:
+       http://127.0.0.1:5000
+
+FOR THE FACULTY DEMO
+- Set the load in the top bar.
+- Do one clean, controlled first rep.
+- That first rep becomes the live demo baseline.
+- Do later reps slightly faster/slower or with stronger EMG to show
+  the normalized metrics and decision logic changing live.
+
+The UI keeps the same NeuroMotion dark futuristic layout and live graph.
