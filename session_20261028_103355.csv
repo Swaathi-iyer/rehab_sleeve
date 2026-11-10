@@ -1,0 +1,1 @@
+timestamp,rep,rep_time_s,mean_emg,peak_emg,normalized_emg_pct,terminal_decel_proxy_dps2,tempo_deviation_pct,current_load_kg,fatigue_status,control_status,baseline_decision,progression_status
